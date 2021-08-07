@@ -1,0 +1,59 @@
+{
+  "name": "vite-plugin-vue-server-ref",
+  "version": "0.0.3",
+  "description": "Extend Vite config from package.json field",
+  "keywords": [
+    "vite-plugin"
+  ],
+  "homepage": "https://github.com/antfu/vite-plugin-vue-server-ref#readme",
+  "bugs": {
+    "url": "https://github.com/antfu/vite-plugin-vue-server-ref/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antfu/vite-plugin-vue-server-ref.git"
+  },
+  "funding": "https://github.com/sponsors/antfu",
+  "license": "MIT",
+  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsup src/index.ts --dts --format cjs,esm",
+    "dev": "npm run build -- --watch",
+    "release": "bumpp --commit --push --tag && npm publish",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "debug": "^4.3.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.7.0",
+    "@antfu/ni": "^0.7.0",
+    "@antfu/utils": "^0.2.4",
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.12",
+    "@types/node": "^16.4.13",
+    "@vue/reactivity": "^3.1.5",
+    "bumpp": "^6.0.6",
+    "eslint": "^7.32.0",
+    "eslint-plugin-jest": "^24.4.0",
+    "esno": "^0.8.0",
+    "tsup": "^4.13.1",
+    "typescript": "^4.3.5",
+    "vite": "^2.4.4",
+    "vue": "^3.1.5"
+  },
+  "peerDependencies": {
+    "vite": "^2.0.0",
+    "vue": "^3.0.0-0"
+  }
+}
