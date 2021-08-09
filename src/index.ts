@@ -70,8 +70,22 @@ const data = ref(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 data.syncUp = true
 data.syncDown = true
 data.paused = false
+data.patch = async () => false
+data.onChange = () => {}
+data.onPatch = () => {}
 
 if (import.meta.hot) {
+  function post(payload) {
+    ${debug ? `console.log("[server-ref] [${key}] outgoing", payload)` : ''}
+    return fetch('${URL_PREFIX + key}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    })
+  }
+
   ${debug ? `console.log("[server-ref] [${key}] ref", data)` : ''}
   ${debug ? `console.log("[server-ref] [${key}] initial", data.value)` : ''}
 
@@ -83,9 +97,27 @@ if (import.meta.hot) {
     if (payload.key !== "${key}")
       return
     skipNext = true
-    data.value = payload.data
-    ${debug ? `console.log("[server-ref] [${key}] incoming", payload.data)` : ''}
+    if (payload.patch) {
+      data.onPatch(payload.patch)
+      Object.assign(data.value, payload.patch)
+      ${debug ? `console.log("[server-ref] [${key}] patch incoming", payload.patch)` : ''}
+    }
+    else {
+      data.onChange(payload.data)
+      data.value = payload.data
+      ${debug ? `console.log("[server-ref] [${key}] incoming", payload.data)` : ''}
+    }
   })
+
+  data.patch = async (patch) => {
+    if (!data.syncUp || data.paused)
+      return false
+    return post({
+      patch,
+      timestamp: Date.now(),
+    })
+  }
+
   watch(data, (v) => {
     if (!data.syncUp || data.paused)
       return
@@ -97,16 +129,9 @@ if (import.meta.hot) {
       clearTimeout(timer)
 
     timer = setTimeout(()=>{
-      ${debug ? `console.log("[server-ref] [${key}] outgoing", data.value)` : ''}
-      fetch('${URL_PREFIX + key}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: data.value,
-          timestamp: Date.now(),
-        })
+      post({
+        data: data.value,
+        timestamp: Date.now(),
       })
     }, ${debounce})
   }, { flush: 'sync', deep: true })

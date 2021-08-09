@@ -3,8 +3,9 @@ declare module 'server-ref:*' {
   type ServerRef<T> = Ref<T> & {
     syncDown: boolean
     syncUp: boolean
-    paused: boolean
-    onChange: (fn: (data: T) => void) => void
+    onChange(data: T): void
+    onPatch(patch: Partial<T>): void
+    patch(patch: Partial<T>): Promise<boolean>
   }
   const ref: ServerRef<unknown>
   export default ref

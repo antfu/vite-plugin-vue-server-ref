@@ -33,5 +33,7 @@ export interface ServerRefOptions<T extends Record<string, unknown>> {
 export type ServerRef<T> = Ref<T> & {
   syncDown: boolean
   syncUp: boolean
-  onChange: (fn: (data: T) => void) => void
+  onChange(data: T): void
+  onPatch(patch: Partial<T>): void
+  patch(patch: Partial<T>): Promise<boolean>
 }
