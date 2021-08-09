@@ -7,6 +7,6 @@ declare module 'server-ref:*' {
     onPatch(patch: Partial<T>): void
     patch(patch: Partial<T>): Promise<boolean>
   }
-  const ref: ServerRef<unknown>
+  const ref: ServerRef<any>
   export default ref
 }

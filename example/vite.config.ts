@@ -8,6 +8,12 @@ export default defineConfig({
     Vue(),
     ServerRef({
       debug: true,
+      state: {
+        state: {
+          input: '',
+          items: [],
+        },
+      },
     }),
   ],
 })

@@ -23,10 +23,12 @@ export function get(obj: any, key: string) {
 export function set(obj: any, key: string, value: any) {
   const keys = key.split('.')
   let acc = obj
-  keys.forEach((key) => {
-    if (!acc[key])
-      acc[key] = {}
-    acc = acc[key]
-  })
+  keys
+    .slice(0, -1)
+    .forEach((key) => {
+      if (!acc[key])
+        acc[key] = {}
+      acc = acc[key]
+    })
   acc[keys[keys.length - 1]] = value
 }

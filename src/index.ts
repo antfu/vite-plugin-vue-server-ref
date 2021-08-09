@@ -32,18 +32,22 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
           return next()
 
         const key = req.url.slice(URL_PREFIX.length)
-        const { data, timestamp, patch } = await getBodyJson(req)
+        const { data, timestamp, patch, source } = await getBodyJson(req)
 
         const module = server.moduleGraph.getModuleById(URL_PREFIX + key)
         if (module)
           server.moduleGraph.invalidateModule(module)
 
-        set(state, key, data)
+        if (patch)
+          set(state, key, Object.assign(get(state, key), patch))
+        else
+          set(state, key, data)
 
         server.ws.send({
           type: 'custom',
           event: WS_EVENT,
           data: {
+            source,
             key,
             data,
             patch,
@@ -71,10 +75,14 @@ data.syncUp = true
 data.syncDown = true
 data.paused = false
 data.patch = async () => false
-data.onChange = () => {}
+data.onSet = () => {}
 data.onPatch = () => {}
 
 if (import.meta.hot) {
+  function uid() {
+    return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
+  }
+
   function post(payload) {
     ${debug ? `console.log("[server-ref] [${key}] outgoing", payload)` : ''}
     return fetch('${URL_PREFIX + key}', {
@@ -89,24 +97,24 @@ if (import.meta.hot) {
   ${debug ? `console.log("[server-ref] [${key}] ref", data)` : ''}
   ${debug ? `console.log("[server-ref] [${key}] initial", data.value)` : ''}
 
-  let skipNext = false
+  const id = uid()
+  let skipWatch = false
   let timer = null
   import.meta.hot.on("${WS_EVENT}", (payload) => {
-    if (!data.syncDown || data.paused)
+    if (!data.syncDown || data.paused || payload.key !== "${key}" || payload.source === id)
       return
-    if (payload.key !== "${key}")
-      return
-    skipNext = true
+    skipWatch = true
     if (payload.patch) {
       data.onPatch(payload.patch)
       data.value = Object.assign(data.value, payload.patch)
       ${debug ? `console.log("[server-ref] [${key}] patch incoming", payload.patch)` : ''}
     }
     else {
-      data.onChange(payload.data)
+      data.onSet(payload.data)
       data.value = payload.data
       ${debug ? `console.log("[server-ref] [${key}] incoming", payload.data)` : ''}
     }
+    skipWatch = false
   })
 
   data.patch = async (patch) => {
@@ -114,23 +122,21 @@ if (import.meta.hot) {
       return false
     data.value = Object.assign(data.value, patch)
     return post({
+      source: id,
       patch,
       timestamp: Date.now(),
     })
   }
 
   watch(data, (v) => {
-    if (!data.syncUp || data.paused)
-      return
-    if (skipNext) {
-      skipNext = false
-      return
-    }
     if (timer)
       clearTimeout(timer)
+    if (!data.syncUp || data.paused || skipWatch)
+      return
 
     timer = setTimeout(()=>{
       post({
+        source: id,
         data: data.value,
         timestamp: Date.now(),
       })
