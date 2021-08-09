@@ -4,7 +4,7 @@
     OK
   </button>
   <ul>
-    <li v-for="item in state.items">
+    <li v-for="item in state.items" :key="item">
       {{ item }}
     </li>
   </ul>

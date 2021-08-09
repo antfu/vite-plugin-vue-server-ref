@@ -8,8 +8,5 @@
     "strict": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "types": [
-      "./client.d.ts"
-    ]
   }
 }
