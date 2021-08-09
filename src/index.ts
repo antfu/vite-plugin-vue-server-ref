@@ -99,7 +99,7 @@ if (import.meta.hot) {
     skipNext = true
     if (payload.patch) {
       data.onPatch(payload.patch)
-      Object.assign(data.value, payload.patch)
+      data.value = Object.assign(data.value, payload.patch)
       ${debug ? `console.log("[server-ref] [${key}] patch incoming", payload.patch)` : ''}
     }
     else {
@@ -112,6 +112,7 @@ if (import.meta.hot) {
   data.patch = async (patch) => {
     if (!data.syncUp || data.paused)
       return false
+    data.value = Object.assign(data.value, patch)
     return post({
       patch,
       timestamp: Date.now(),
