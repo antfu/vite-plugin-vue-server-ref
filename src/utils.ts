@@ -15,3 +15,18 @@ export function getBodyJson(req: Connect.IncomingMessage) {
     })
   })
 }
+
+export function get(obj: any, key: string) {
+  return key.split('.').reduce((acc, key) => acc?.[key], obj)
+}
+
+export function set(obj: any, key: string, value: any) {
+  const keys = key.split('.')
+  let acc = obj
+  keys.forEach((key) => {
+    if (!acc[key])
+      acc[key] = {}
+    acc = acc[key]
+  })
+  acc[keys[keys.length - 1]] = value
+}

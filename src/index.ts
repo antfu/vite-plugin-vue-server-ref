@@ -1,6 +1,6 @@
 import type { Plugin } from 'vite'
 import { ServerRefOptions } from './types'
-import { getBodyJson } from './utils'
+import { get, getBodyJson, set } from './utils'
 
 export * from './types'
 
@@ -38,7 +38,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         if (module)
           server.moduleGraph.invalidateModule(module)
 
-        state[key] = data
+        set(state, key, data)
 
         server.ws.send({
           type: 'custom',
@@ -61,16 +61,15 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
       if (!id.startsWith(URL_PREFIX))
         return null
 
-      const key = id.slice(URL_PREFIX.length)
+      const key = id.slice(URL_PREFIX.length).replace(/\//g, '.')
       return `
 import { ref, watch } from "${clientVue}"
 
-const data = ref(${JSON.stringify(state[key] ?? defaultValue(key))})
+const data = ref(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 
 data.syncUp = true
 data.syncDown = true
 data.paused = false
-data.defer = false
 
 if (import.meta.hot) {
   ${debug ? `console.log("[server-ref] [${key}] ref", data)` : ''}

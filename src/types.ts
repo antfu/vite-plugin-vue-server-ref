@@ -33,7 +33,5 @@ export interface ServerRefOptions<T extends Record<string, unknown>> {
 export type ServerRef<T> = Ref<T> & {
   syncDown: boolean
   syncUp: boolean
-  paused: boolean
-  readonly defer: boolean
   onChange: (fn: (data: T) => void) => void
 }
