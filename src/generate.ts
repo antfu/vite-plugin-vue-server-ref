@@ -23,7 +23,7 @@ define(data, '$syncUp', true)
 define(data, '$syncDown', true)
 define(data, '$paused', false)
 define(data, '$onSet', fn => onSet.push(fn))
-define(data, '$onPatch', fn => onPath.push(fn))
+define(data, '$onPatch', fn => onPatch.push(fn))
 
 if (import.meta.hot) {
   const id = randId()
