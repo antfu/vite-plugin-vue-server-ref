@@ -1,4 +1,6 @@
 import type { Connect } from 'vite'
+import { parse } from './client'
+import { PREFIXES } from './constant'
 
 export function getBodyJson(req: Connect.IncomingMessage) {
   return new Promise<any>((resolve, reject) => {
@@ -7,7 +9,7 @@ export function getBodyJson(req: Connect.IncomingMessage) {
     req.on('error', reject)
     req.on('end', () => {
       try {
-        resolve(JSON.parse(body) || {})
+        resolve(parse(body) || {})
       }
       catch (e) {
         reject(e)
@@ -31,4 +33,16 @@ export function set(obj: any, key: string, value: any) {
       acc = acc[key]
     })
   acc[keys[keys.length - 1]] = value
+}
+
+export function parseId(id: string): { key: string; type: 'ref' | 'reactive'; prefix: string } | undefined {
+  for (const pre of PREFIXES) {
+    if (id.startsWith(pre)) {
+      return {
+        key: id.substr(pre.length).replace(/\\/g, '.'),
+        type: pre.includes('ref') ? 'ref' : 'reactive',
+        prefix: pre,
+      }
+    }
+  }
 }

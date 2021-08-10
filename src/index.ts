@@ -1,12 +1,9 @@
 import type { Plugin } from 'vite'
 import { ServerRefOptions } from './types'
-import { get, getBodyJson, set } from './utils'
+import { VIRTUAL_PREFIX, URL_PREFIX, WS_EVENT } from './constant'
+import { get, getBodyJson, parseId, set } from './utils'
 
 export * from './types'
-
-const URL_PREFIX = '/@server-ref/'
-const VIRTUAL_PREFIX = 'server-ref:'
-const WS_EVENT = 'server-ref'
 
 export default function VitePluginServerRef(options: ServerRefOptions<any> = {}): Plugin {
   const {
@@ -20,18 +17,23 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
   return <Plugin>{
     name: 'vite-plugin-vue-server-ref',
     resolveId(id) {
-      if (id.startsWith(VIRTUAL_PREFIX))
-        return URL_PREFIX + id.slice(VIRTUAL_PREFIX.length)
-      return id.startsWith(URL_PREFIX)
+      const idx = VIRTUAL_PREFIX.findIndex(pre => id.startsWith(pre))
+      if (idx > -1)
+        return URL_PREFIX[idx] + id.slice(VIRTUAL_PREFIX[idx].length)
+      return URL_PREFIX.some(pre => id.startsWith(pre))
         ? id
         : null
     },
     configureServer(server) {
       server.middlewares.use(async(req, res, next) => {
-        if (!req.url?.startsWith(URL_PREFIX) || req.method !== 'POST')
+        if (!req.url || req.method !== 'POST')
           return next()
 
-        const key = req.url.slice(URL_PREFIX.length)
+        const id = parseId(req.url)
+        if (!id)
+          return
+
+        const key = id.key
         const { data, timestamp, patch, source } = await getBodyJson(req)
 
         const module = server.moduleGraph.getModuleById(URL_PREFIX + key)
@@ -62,86 +64,88 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
       })
     },
     load(id) {
-      if (!id.startsWith(URL_PREFIX))
-        return null
+      const res = parseId(id)
+      if (!res)
+        return
 
-      const key = id.slice(URL_PREFIX.length).replace(/\//g, '.')
+      const { key, type, prefix } = res
+      const access = type === 'ref' ? 'data.value' : 'data'
+
       return `
-import { ref, watch } from "${clientVue}"
+import { ${type}, watch } from "${clientVue}"
+import { randId, stringify, parse, reactiveSet, define } from "vite-plugin-vue-server-ref/client"
 
-const data = ref(${JSON.stringify(get(state, key) ?? defaultValue(key))})
+const data = ${type}(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 
-data.syncUp = true
-data.syncDown = true
-data.paused = false
-data.patch = async () => false
-data.onSet = () => {}
-data.onPatch = () => {}
+define(data, '$syncUp', true)
+define(data, '$syncDown', true)
+define(data, '$paused', false)
+define(data, '$onSet', () => {})
+define(data, '$onPatch', () => {})
 
 if (import.meta.hot) {
-  function uid() {
-    return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
-  }
-
   function post(payload) {
     ${debug ? `console.log("[server-ref] [${key}] outgoing", payload)` : ''}
-    return fetch('${URL_PREFIX + key}', {
+    return fetch('${prefix + key}', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload)
+      body: stringify(payload)
     })
   }
 
   ${debug ? `console.log("[server-ref] [${key}] ref", data)` : ''}
-  ${debug ? `console.log("[server-ref] [${key}] initial", data.value)` : ''}
+  ${debug ? `console.log("[server-ref] [${key}] initial", ${access})` : ''}
 
-  const id = uid()
+  const id = randId()
   let skipWatch = false
   let timer = null
   import.meta.hot.on("${WS_EVENT}", (payload) => {
-    if (!data.syncDown || data.paused || payload.key !== "${key}" || payload.source === id)
+    if (!data.$syncDown || data.$paused || payload.key !== "${key}" || payload.source === id)
       return
     skipWatch = true
     if (payload.patch) {
-      data.onPatch(payload.patch)
-      data.value = Object.assign(data.value, payload.patch)
+      data.$onPatch(payload.patch)
+      Object.assign(${access}, payload.patch)
       ${debug ? `console.log("[server-ref] [${key}] patch incoming", payload.patch)` : ''}
     }
     else {
-      data.onSet(payload.data)
-      data.value = payload.data
+      data.$onSet(payload.data)
+      ${type === 'ref' ? 'data.value = payload.data' : 'reactiveSet(data, payload.data)'}
       ${debug ? `console.log("[server-ref] [${key}] incoming", payload.data)` : ''}
     }
     skipWatch = false
   })
 
-  data.patch = async (patch) => {
-    if (!data.syncUp || data.paused)
+  define(data, '$patch', async (patch) => {
+    if (!data.$syncUp || data.$paused)
       return false
-    data.value = Object.assign(data.value, patch)
+    Object.assign(${access}, patch)
     return post({
       source: id,
       patch,
       timestamp: Date.now(),
     })
-  }
+  })
 
   watch(data, (v) => {
     if (timer)
       clearTimeout(timer)
-    if (!data.syncUp || data.paused || skipWatch)
+    if (!data.$syncUp || data.$paused || skipWatch)
       return
 
     timer = setTimeout(()=>{
       post({
         source: id,
-        data: data.value,
+        data: ${access},
         timestamp: Date.now(),
       })
     }, ${debounce})
   }, { flush: 'sync', deep: true })
+}
+else {
+  define(data, '$patch', async () => false)
 }
 
 export default data

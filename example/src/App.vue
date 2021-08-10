@@ -11,12 +11,12 @@
 </template>
 
 <script setup lang="ts">
-import state from 'server-ref:state'
+import state from 'server-reactive:state'
 
 function add() {
-  state.value.items = state.value.items || []
-  state.value.items.push(state.value.input)
-  state.value.input = ''
+  state.items = state.items || []
+  state.items.push(state.input)
+  state.input = ''
 }
 </script>
 
