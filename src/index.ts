@@ -35,7 +35,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         const key = id.key
         const { data, timestamp, patch, source } = await getBodyJson(req)
 
-        const module = server.moduleGraph.getModuleById(URL_PREFIX + key)
+        const module = server.moduleGraph.getModuleById(req.url)
         if (module)
           server.moduleGraph.invalidateModule(module)
 
