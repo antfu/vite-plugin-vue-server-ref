@@ -16,11 +16,14 @@ import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' react
 
 const data = ${type}(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 
+let onSet = []
+let onPatch = []
+
 define(data, '$syncUp', true)
 define(data, '$syncDown', true)
 define(data, '$paused', false)
-define(data, '$onSet', () => {})
-define(data, '$onPatch', () => {})
+define(data, '$onSet', fn => onSet.push(fn))
+define(data, '$onPatch', fn => onPath.push(fn))
 
 if (import.meta.hot) {
   const id = randId()
@@ -53,7 +56,7 @@ if (import.meta.hot) {
 
   function applyPatch(patch) {
     skipWatch = true
-    data.$onPatch(patch)
+    onPatch.forEach(fn => fn(patch))
     apply(${access}, patch)
     ${debug ? `console.log("[server-ref] [${key}] patch incoming", patch)` : ''}
     ${defer ? 'makeClone()' : ''}
@@ -62,7 +65,7 @@ if (import.meta.hot) {
 
   function applySet(newData) {
     skipWatch = true
-    data.$onSet(newData)
+    onSet.forEach(fn => fn(newData))
     ${type === 'ref' ? 'data.value = payload.data' : 'reactiveSet(data, newData)'}
     ${debug ? `console.log("[server-ref] [${key}] incoming", newData)` : ''}
     ${defer ? 'makeClone()' : ''}

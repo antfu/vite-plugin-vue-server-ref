@@ -3,8 +3,8 @@ declare module 'server-ref:*' {
   type ServerRef<T> = Ref<T> & {
     $syncDown: boolean
     $syncUp: boolean
-    $onChange(data: T): void
-    $onPatch(patch: Partial<T>): void
+    $onChange(fn: (data: T) => void): void
+    $onPatch(fn: (patch: Partial<T>) => void): void
     $patch(patch: Partial<T>): Promise<boolean>
   }
   const ref: ServerRef<any>
@@ -15,8 +15,8 @@ declare module 'server-reactive:*' {
   type ServerReactive<T> = T & {
     $syncDown: boolean
     $syncUp: boolean
-    $onChange(data: T): void
-    $onPatch(patch: Partial<T>): void
+    $onChange(fn: (data: T) => void): void
+    $onPatch(fn: (patch: Partial<T>) => void): void
     $patch(patch: Partial<T>): Promise<boolean>
   }
   const ref: ServerReactive<any>

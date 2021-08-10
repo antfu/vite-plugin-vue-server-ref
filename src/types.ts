@@ -33,8 +33,8 @@ export interface ServerRefOptions<T extends Record<string, unknown>> {
 export type ServerRefExtend<T> = {
   $syncDown: boolean
   $syncUp: boolean
-  $onChange(data: T): void
-  $onPatch(patch: Partial<T>): void
+  $onChange(fn: (data: T) => void): void
+  $onPatch(fn: (patch: Partial<T>) => void): void
   $patch(patch: Partial<T>): Promise<boolean>
 }
 
