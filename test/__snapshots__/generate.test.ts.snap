@@ -25,9 +25,10 @@ if (import.meta.hot) {
       body: stringify(payload)
     })
   }
-  function applyPatch(patch) {
+  function applyPatch(patch, trigger = true) {
     skipWatch = true
-    onPatch.forEach(fn => fn(patch))
+    if (trigger)
+      onPatch.forEach(fn => fn(patch))
     apply(data.value, patch)
     skipWatch = false
   }
@@ -48,7 +49,7 @@ if (import.meta.hot) {
   define(data, '$patch', async (patch) => {
     if (!data.$syncUp || data.$paused)
       return false
-    applyPatch(patch)
+    applyPatch(patch, false)
     return post({
       source: id,
       patch,
@@ -101,9 +102,10 @@ if (import.meta.hot) {
       body: stringify(payload)
     })
   }
-  function applyPatch(patch) {
+  function applyPatch(patch, trigger = true) {
     skipWatch = true
-    onPatch.forEach(fn => fn(patch))
+    if (trigger)
+      onPatch.forEach(fn => fn(patch))
     apply(data, patch)
     skipWatch = false
   }
@@ -124,7 +126,7 @@ if (import.meta.hot) {
   define(data, '$patch', async (patch) => {
     if (!data.$syncUp || data.$paused)
       return false
-    applyPatch(patch)
+    applyPatch(patch, false)
     return post({
       source: id,
       patch,
@@ -184,9 +186,10 @@ if (import.meta.hot) {
   function getDiff() {
     return diff(data, copy)
   }
-  function applyPatch(patch) {
+  function applyPatch(patch, trigger = true) {
     skipWatch = true
-    onPatch.forEach(fn => fn(patch))
+    if (trigger)
+      onPatch.forEach(fn => fn(patch))
     apply(data, patch)
     makeClone()
     skipWatch = false
@@ -209,7 +212,7 @@ if (import.meta.hot) {
   define(data, '$patch', async (patch) => {
     if (!data.$syncUp || data.$paused)
       return false
-    applyPatch(patch)
+    applyPatch(patch, false)
     return post({
       source: id,
       patch,
@@ -262,9 +265,10 @@ if (import.meta.hot) {
       body: stringify(payload)
     })
   }
-  function applyPatch(patch) {
+  function applyPatch(patch, trigger = true) {
     skipWatch = true
-    onPatch.forEach(fn => fn(patch))
+    if (trigger)
+      onPatch.forEach(fn => fn(patch))
     apply(data.value, patch)
     skipWatch = false
   }
@@ -285,7 +289,7 @@ if (import.meta.hot) {
   define(data, '$patch', async (patch) => {
     if (!data.$syncUp || data.$paused)
       return false
-    applyPatch(patch)
+    applyPatch(patch, false)
     return post({
       source: id,
       patch,

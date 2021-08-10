@@ -54,9 +54,10 @@ if (import.meta.hot) {
   `
     : ''}
 
-  function applyPatch(patch) {
+  function applyPatch(patch, trigger = true) {
     skipWatch = true
-    onPatch.forEach(fn => fn(patch))
+    if (trigger)
+      onPatch.forEach(fn => fn(patch))
     apply(${access}, patch)
     ${debug ? `console.log("[server-ref] [${key}] patch incoming", patch)` : ''}
     ${defer ? 'makeClone()' : ''}
@@ -87,7 +88,7 @@ if (import.meta.hot) {
   define(data, '$patch', async (patch) => {
     if (!data.$syncUp || data.$paused)
       return false
-    applyPatch(patch)
+    applyPatch(patch, false)
     return post({
       source: id,
       patch,
