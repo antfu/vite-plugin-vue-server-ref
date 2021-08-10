@@ -30,10 +30,13 @@ export interface ServerRefOptions<T extends Record<string, unknown>> {
   onChanged?: <K extends keyof T>(name: K, data: T[K], patch: Partial<T[K]> | undefined, timestamp: number) => void
 }
 
-export type ServerRef<T> = Ref<T> & {
-  syncDown: boolean
-  syncUp: boolean
-  onChange(data: T): void
-  onPatch(patch: Partial<T>): void
-  patch(patch: Partial<T>): Promise<boolean>
+export type ServerRefExtend<T> = {
+  $syncDown: boolean
+  $syncUp: boolean
+  $onChange(data: T): void
+  $onPatch(patch: Partial<T>): void
+  $patch(patch: Partial<T>): Promise<boolean>
 }
+
+export type ServerRef<T> = Ref<T> & ServerRefExtend<T>
+export type ServerReactive<T> = T & ServerRefExtend<T>
