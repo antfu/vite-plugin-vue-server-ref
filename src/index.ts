@@ -13,6 +13,8 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
 
   const { state } = resolved
 
+  const idMaps: Record<string, Set<string> | undefined> = {}
+
   return <Plugin>{
     name: 'vite-plugin-vue-server-ref',
     resolveId(id) {
@@ -35,9 +37,11 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         const key = id.key
         const { data, timestamp, patch, source } = await getBodyJson(req)
 
-        const module = server.moduleGraph.getModuleById(req.url)
-        if (module)
-          server.moduleGraph.invalidateModule(module)
+        for (const id of idMaps[key] || []) {
+          const module = server.moduleGraph.getModuleById(id)
+          if (module)
+            server.moduleGraph.invalidateModule(module)
+        }
 
         if (patch)
           set(state, key, apply(get(state, key), patch))
@@ -66,6 +70,10 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
       const res = parseId(id)
       if (!res)
         return
+
+      if (!idMaps[res.key])
+        idMaps[res.key] = new Set()
+      idMaps[res.key]!.add(id)
 
       return genCode(resolved, res)
     },
