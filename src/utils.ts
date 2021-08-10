@@ -49,7 +49,7 @@ export function parseId(id: string): ParsedId | undefined {
       const { pathname: key, search } = parseURL(id.substr(pre.length))
       const query = parseQuery(search)
       return {
-        key: key.replace(/\\/g, '.'),
+        key: key.replace(/\//g, '.'),
         type: pre.includes('ref') ? 'ref' : 'reactive',
         prefix: pre,
         defer: 'defer' in query,

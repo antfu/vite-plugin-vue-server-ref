@@ -12,7 +12,7 @@ export function genCode(
 
   return `
 import { ${type}, watch } from "${clientVue}"
-import { randId, stringify, parse, ${type === 'reactive' ? 'reactiveSet,' : ''} define, ${defer ? 'clone, diff, apply' : ''} } from "vite-plugin-vue-server-ref/client"
+import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' reactiveSet,' : ''}${defer ? ' clone, diff' : ''} } from "vite-plugin-vue-server-ref/client"
 
 const data = ${type}(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 

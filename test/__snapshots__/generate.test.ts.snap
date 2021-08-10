@@ -3,7 +3,7 @@
 exports[`generate deep ref 1`] = `
 "
 import { ref, watch } from \\"vue\\"
-import { randId, stringify, parse,  define,  } from \\"vite-plugin-vue-server-ref/client\\"
+import { randId, stringify, parse, define, apply, } from \\"vite-plugin-vue-server-ref/client\\"
 const data = ref(undefined)
 define(data, '$syncUp', true)
 define(data, '$syncDown', true)
@@ -15,7 +15,7 @@ if (import.meta.hot) {
   let skipWatch = false
   let timer = null
   function post(payload) {
-    return fetch('server-ref:foo/bar', {
+    return fetch('server-ref:foo.bar', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ if (import.meta.hot) {
     skipWatch = false
   }
   import.meta.hot.on(\\"vue-server-ref\\", (payload) => {
-    if (!data.$syncDown || data.$paused || payload.key !== \\"foo/bar\\" || payload.source === id)
+    if (!data.$syncDown || data.$paused || payload.key !== \\"foo.bar\\" || payload.source === id)
       return
     if (payload.patch)
       applyPatch(payload.patch)
@@ -77,7 +77,7 @@ export default data
 exports[`generate reactive 1`] = `
 "
 import { reactive, watch } from \\"vue\\"
-import { randId, stringify, parse, reactiveSet, define,  } from \\"vite-plugin-vue-server-ref/client\\"
+import { randId, stringify, parse, define, apply, reactiveSet, } from \\"vite-plugin-vue-server-ref/client\\"
 const data = reactive(undefined)
 define(data, '$syncUp', true)
 define(data, '$syncDown', true)
@@ -151,7 +151,7 @@ export default data
 exports[`generate reactive deferred 1`] = `
 "
 import { reactive, watch } from \\"vue\\"
-import { randId, stringify, parse, reactiveSet, define, clone, diff, apply } from \\"vite-plugin-vue-server-ref/client\\"
+import { randId, stringify, parse, define, apply, reactiveSet, clone, diff } from \\"vite-plugin-vue-server-ref/client\\"
 const data = reactive(undefined)
 define(data, '$syncUp', true)
 define(data, '$syncDown', true)
@@ -234,7 +234,7 @@ export default data
 exports[`generate ref 1`] = `
 "
 import { ref, watch } from \\"vue\\"
-import { randId, stringify, parse,  define,  } from \\"vite-plugin-vue-server-ref/client\\"
+import { randId, stringify, parse, define, apply, } from \\"vite-plugin-vue-server-ref/client\\"
 const data = ref(undefined)
 define(data, '$syncUp', true)
 define(data, '$syncDown', true)
