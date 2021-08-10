@@ -1,0 +1,306 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate deep ref 1`] = `
+"
+import { ref, watch } from \\"vue\\"
+import { randId, stringify, parse,  define,  } from \\"vite-plugin-vue-server-ref/client\\"
+const data = ref(undefined)
+define(data, '$syncUp', true)
+define(data, '$syncDown', true)
+define(data, '$paused', false)
+define(data, '$onSet', () => {})
+define(data, '$onPatch', () => {})
+if (import.meta.hot) {
+  const id = randId()
+  let skipWatch = false
+  let timer = null
+  function post(payload) {
+    return fetch('server-ref:foo/bar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: stringify(payload)
+    })
+  }
+  function applyPatch(patch) {
+    skipWatch = true
+    data.$onPatch(patch)
+    apply(data.value, patch)
+    skipWatch = false
+  }
+  function applySet(newData) {
+    skipWatch = true
+    data.$onSet(newData)
+    data.value = payload.data
+    skipWatch = false
+  }
+  import.meta.hot.on(\\"vue-server-ref\\", (payload) => {
+    if (!data.$syncDown || data.$paused || payload.key !== \\"foo/bar\\" || payload.source === id)
+      return
+    if (payload.patch)
+      applyPatch(payload.patch)
+    else
+      applySet(payload.data)
+  })
+  define(data, '$patch', async (patch) => {
+    if (!data.$syncUp || data.$paused)
+      return false
+    applyPatch(patch)
+    return post({
+      source: id,
+      patch,
+      timestamp: Date.now(),
+    })
+  })
+  watch(data, (v) => {
+    if (timer)
+      clearTimeout(timer)
+    if (!data.$syncUp || data.$paused || skipWatch)
+      return
+    timer = setTimeout(()=>{
+      post({
+        source: id,
+        data: data.value,
+        timestamp: Date.now(),
+      })
+    }, 10)
+  }, { flush: 'sync', deep: true })
+}
+else {
+  define(data, '$patch', async () => false)
+}
+export default data
+"
+`;
+
+exports[`generate reactive 1`] = `
+"
+import { reactive, watch } from \\"vue\\"
+import { randId, stringify, parse, reactiveSet, define,  } from \\"vite-plugin-vue-server-ref/client\\"
+const data = reactive(undefined)
+define(data, '$syncUp', true)
+define(data, '$syncDown', true)
+define(data, '$paused', false)
+define(data, '$onSet', () => {})
+define(data, '$onPatch', () => {})
+if (import.meta.hot) {
+  const id = randId()
+  let skipWatch = false
+  let timer = null
+  function post(payload) {
+    return fetch('server-reactive:foo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: stringify(payload)
+    })
+  }
+  function applyPatch(patch) {
+    skipWatch = true
+    data.$onPatch(patch)
+    apply(data, patch)
+    skipWatch = false
+  }
+  function applySet(newData) {
+    skipWatch = true
+    data.$onSet(newData)
+    reactiveSet(data, newData)
+    skipWatch = false
+  }
+  import.meta.hot.on(\\"vue-server-ref\\", (payload) => {
+    if (!data.$syncDown || data.$paused || payload.key !== \\"foo\\" || payload.source === id)
+      return
+    if (payload.patch)
+      applyPatch(payload.patch)
+    else
+      applySet(payload.data)
+  })
+  define(data, '$patch', async (patch) => {
+    if (!data.$syncUp || data.$paused)
+      return false
+    applyPatch(patch)
+    return post({
+      source: id,
+      patch,
+      timestamp: Date.now(),
+    })
+  })
+  watch(data, (v) => {
+    if (timer)
+      clearTimeout(timer)
+    if (!data.$syncUp || data.$paused || skipWatch)
+      return
+    timer = setTimeout(()=>{
+      post({
+        source: id,
+        data: data,
+        timestamp: Date.now(),
+      })
+    }, 10)
+  }, { flush: 'sync', deep: true })
+}
+else {
+  define(data, '$patch', async () => false)
+}
+export default data
+"
+`;
+
+exports[`generate reactive deferred 1`] = `
+"
+import { reactive, watch } from \\"vue\\"
+import { randId, stringify, parse, reactiveSet, define, clone, diff, apply } from \\"vite-plugin-vue-server-ref/client\\"
+const data = reactive(undefined)
+define(data, '$syncUp', true)
+define(data, '$syncDown', true)
+define(data, '$paused', false)
+define(data, '$onSet', () => {})
+define(data, '$onPatch', () => {})
+if (import.meta.hot) {
+  const id = randId()
+  let skipWatch = false
+  let timer = null
+  let copy = null
+  function post(payload) {
+    return fetch('server-reactive:foo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: stringify(payload)
+    })
+  }
+  function makeClone() {
+    copy = clone(data)
+  }
+  function getDiff() {
+    return diff(data, copy)
+  }
+  function applyPatch(patch) {
+    skipWatch = true
+    data.$onPatch(patch)
+    apply(data, patch)
+    makeClone()
+    skipWatch = false
+  }
+  function applySet(newData) {
+    skipWatch = true
+    data.$onSet(newData)
+    reactiveSet(data, newData)
+    makeClone()
+    skipWatch = false
+  }
+  import.meta.hot.on(\\"vue-server-ref\\", (payload) => {
+    if (!data.$syncDown || data.$paused || payload.key !== \\"foo\\" || payload.source === id)
+      return
+    if (payload.patch)
+      applyPatch(payload.patch)
+    else
+      applySet(payload.data)
+  })
+  define(data, '$patch', async (patch) => {
+    if (!data.$syncUp || data.$paused)
+      return false
+    applyPatch(patch)
+    return post({
+      source: id,
+      patch,
+      timestamp: Date.now(),
+    })
+  })
+  watch(data, (v) => {
+    if (timer)
+      clearTimeout(timer)
+    if (!data.$syncUp || data.$paused || skipWatch)
+      return
+    timer = setTimeout(()=>{
+      post({
+        source: id,
+        patch: getDiff(),
+        timestamp: Date.now(),
+      })
+    }, 10)
+  }, { flush: 'sync', deep: true })
+}
+else {
+  define(data, '$patch', async () => false)
+}
+export default data
+"
+`;
+
+exports[`generate ref 1`] = `
+"
+import { ref, watch } from \\"vue\\"
+import { randId, stringify, parse,  define,  } from \\"vite-plugin-vue-server-ref/client\\"
+const data = ref(undefined)
+define(data, '$syncUp', true)
+define(data, '$syncDown', true)
+define(data, '$paused', false)
+define(data, '$onSet', () => {})
+define(data, '$onPatch', () => {})
+if (import.meta.hot) {
+  const id = randId()
+  let skipWatch = false
+  let timer = null
+  function post(payload) {
+    return fetch('server-ref:foo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: stringify(payload)
+    })
+  }
+  function applyPatch(patch) {
+    skipWatch = true
+    data.$onPatch(patch)
+    apply(data.value, patch)
+    skipWatch = false
+  }
+  function applySet(newData) {
+    skipWatch = true
+    data.$onSet(newData)
+    data.value = payload.data
+    skipWatch = false
+  }
+  import.meta.hot.on(\\"vue-server-ref\\", (payload) => {
+    if (!data.$syncDown || data.$paused || payload.key !== \\"foo\\" || payload.source === id)
+      return
+    if (payload.patch)
+      applyPatch(payload.patch)
+    else
+      applySet(payload.data)
+  })
+  define(data, '$patch', async (patch) => {
+    if (!data.$syncUp || data.$paused)
+      return false
+    applyPatch(patch)
+    return post({
+      source: id,
+      patch,
+      timestamp: Date.now(),
+    })
+  })
+  watch(data, (v) => {
+    if (timer)
+      clearTimeout(timer)
+    if (!data.$syncUp || data.$paused || skipWatch)
+      return
+    timer = setTimeout(()=>{
+      post({
+        source: id,
+        data: data.value,
+        timestamp: Date.now(),
+      })
+    }, 10)
+  }, { flush: 'sync', deep: true })
+}
+else {
+  define(data, '$patch', async () => false)
+}
+export default data
+"
+`;

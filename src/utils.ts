@@ -1,4 +1,5 @@
 import type { Connect } from 'vite'
+import { parseURL, parseQuery } from 'ufo'
 import { parse } from './client'
 import { PREFIXES } from './constant'
 
@@ -35,13 +36,23 @@ export function set(obj: any, key: string, value: any) {
   acc[keys[keys.length - 1]] = value
 }
 
-export function parseId(id: string): { key: string; type: 'ref' | 'reactive'; prefix: string } | undefined {
+export interface ParsedId {
+  key: string
+  type: 'ref' | 'reactive'
+  prefix: string
+  defer: boolean
+}
+
+export function parseId(id: string): ParsedId | undefined {
   for (const pre of PREFIXES) {
     if (id.startsWith(pre)) {
+      const { pathname: key, search } = parseURL(id.substr(pre.length))
+      const query = parseQuery(search)
       return {
-        key: id.substr(pre.length).replace(/\\/g, '.'),
+        key: key.replace(/\\/g, '.'),
         type: pre.includes('ref') ? 'ref' : 'reactive',
         prefix: pre,
+        defer: 'defer' in query,
       }
     }
   }

@@ -18,13 +18,16 @@ importers:
       eslint-plugin-jest: ^24.4.0
       esno: ^0.8.0
       jest: ^27.0.6
+      klona: ^2.0.4
       ts-jest: ^27.0.4
       tsup: ^4.13.1
       typescript: ^4.3.5
+      ufo: ^0.7.7
       vite: ^2.4.4
       vue: ^3.1.5
     dependencies:
       debug: 4.3.2
+      ufo: 0.7.7
     devDependencies:
       '@antfu/eslint-config': 0.7.0_eslint@7.32.0+typescript@4.3.5
       '@antfu/ni': 0.7.0
@@ -39,6 +42,7 @@ importers:
       eslint-plugin-jest: 24.4.0_eslint@7.32.0+typescript@4.3.5
       esno: 0.8.0
       jest: 27.0.6
+      klona: 2.0.4
       ts-jest: 27.0.4_52cc4273aa16028085013af47e479e10
       tsup: 4.13.1_typescript@4.3.5
       typescript: 4.3.5
@@ -3599,6 +3603,11 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /klona/2.0.4:
+    resolution: {integrity: sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==}
+    engines: {node: '>= 8'}
+    dev: true
+
   /leven/3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
@@ -4935,6 +4944,10 @@ packages:
     resolution: {integrity: sha512-VAH4IvQ7BDFYglMd7BPRDfLgxZZX4O4TFcRDA6EN5X7erNJJq+McIEp8np9aVtxrCJ6qx4GTYVfOWNjcqwZgRw==}
     engines: {node: '>=8'}
     dev: true
+
+  /ufo/0.7.7:
+    resolution: {integrity: sha512-N25aY3HBkJBnahm+2l4JRBBrX5I+JPakF/tDHYDTjd3wUR7iFLdyiPhj8mBwBz21v728BKwM9L9tgBfCntgdlw==}
+    dev: false
 
   /unbox-primitive/1.0.1:
     resolution: {integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==}

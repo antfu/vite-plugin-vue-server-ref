@@ -1,3 +1,6 @@
+export { klona as clone } from 'klona/json'
+export { diff, apply } from './diff'
+
 export const UNDEFINED = '__UNDEFINED___'
 
 export function stringify(data: any) {
@@ -10,6 +13,10 @@ export function parse(json: string) {
 
 export function randId() {
   return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10)
+}
+
+export function isObject(obj: any) {
+  return typeof obj === 'object' && obj !== null
 }
 
 export function reactiveSet(target: any, value: any) {
