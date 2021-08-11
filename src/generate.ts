@@ -56,10 +56,11 @@ if (import.meta.hot) {
 
   function applyPatch(patch, trigger = true) {
     skipWatch = true
-    if (trigger)
+    if (trigger) {
       onPatch.forEach(fn => fn(patch))
+      ${debug ? `console.log("[server-ref] [${key}] patch incoming", patch)` : ''}
+    }
     apply(${access}, patch)
-    ${debug ? `console.log("[server-ref] [${key}] patch incoming", patch)` : ''}
     ${diff ? 'makeClone()' : ''}
     skipWatch = false
   }

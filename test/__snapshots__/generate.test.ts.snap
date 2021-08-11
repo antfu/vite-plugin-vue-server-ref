@@ -27,8 +27,9 @@ if (import.meta.hot) {
   }
   function applyPatch(patch, trigger = true) {
     skipWatch = true
-    if (trigger)
+    if (trigger) {
       onPatch.forEach(fn => fn(patch))
+    }
     apply(data.value, patch)
     skipWatch = false
   }
@@ -104,8 +105,9 @@ if (import.meta.hot) {
   }
   function applyPatch(patch, trigger = true) {
     skipWatch = true
-    if (trigger)
+    if (trigger) {
       onPatch.forEach(fn => fn(patch))
+    }
     apply(data, patch)
     skipWatch = false
   }
@@ -188,8 +190,9 @@ if (import.meta.hot) {
   }
   function applyPatch(patch, trigger = true) {
     skipWatch = true
-    if (trigger)
+    if (trigger) {
       onPatch.forEach(fn => fn(patch))
+    }
     apply(data, patch)
     makeClone()
     skipWatch = false
@@ -267,8 +270,9 @@ if (import.meta.hot) {
   }
   function applyPatch(patch, trigger = true) {
     skipWatch = true
-    if (trigger)
+    if (trigger) {
       onPatch.forEach(fn => fn(patch))
+    }
     apply(data.value, patch)
     skipWatch = false
   }
