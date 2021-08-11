@@ -60,7 +60,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
           },
         })
 
-        options.onChanged?.(key, data, patch, timestamp)
+        options.onChanged?.(key, get(state, key), patch, timestamp)
 
         res.write('')
         res.end()
