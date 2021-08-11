@@ -35,7 +35,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
           return
 
         const key = id.key
-        const { data, timestamp, patch, source } = await getBodyJson(req)
+        const payload = await getBodyJson(req)
 
         for (const id of idMaps[key] || []) {
           const module = server.moduleGraph.getModuleById(id)
@@ -43,24 +43,18 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
             server.moduleGraph.invalidateModule(module)
         }
 
-        if (patch)
-          set(state, key, apply(get(state, key), patch))
+        if (payload.patch)
+          set(state, key, apply(get(state, key), payload.patch))
         else
-          set(state, key, data)
+          set(state, key, payload.data)
 
         server.ws.send({
           type: 'custom',
           event: WS_EVENT,
-          data: {
-            source,
-            key,
-            data,
-            patch,
-            timestamp,
-          },
+          data: payload,
         })
 
-        options.onChanged?.(key, get(state, key), patch, timestamp)
+        options.onChanged?.(key, get(state, key), payload.patch, payload.timestamp)
 
         res.write('')
         res.end()
