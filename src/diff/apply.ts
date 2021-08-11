@@ -1,3 +1,5 @@
+// Ported from https://gist.github.com/developit/998926ad50b5743ac5a108dfde2fbeb2 by @developit
+
 /* eslint-disable no-restricted-syntax */
 /**
  * Use this to apply diffs on the main thread.
