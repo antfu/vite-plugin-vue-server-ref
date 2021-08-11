@@ -1,4 +1,4 @@
-import { ServerRefOptions } from '../dist'
+import { ServerRefOptions } from './types'
 import { WS_EVENT } from './constant'
 import { get, ParsedId } from './utils'
 

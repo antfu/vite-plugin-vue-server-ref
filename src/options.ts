@@ -1,4 +1,4 @@
-import { ServerRefOptions } from '../dist'
+import { ServerRefOptions } from './types'
 
 export const defaultOptions: Required<ServerRefOptions<any>> = {
   state: {},
