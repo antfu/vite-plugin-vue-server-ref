@@ -96,6 +96,20 @@ foo.$onSet((value) => {
 })
 ```
 
+## Diffing
+
+When working with reactive objects, you can add `?diff` to make the syncing incremental (deep diff).
+
+```ts
+import object from 'server-ref:object?diff'
+
+console.log(object) // { foo: ..., bar: ... }
+
+object.foo.nested = 'bar'
+// the patch will be sent as '{ foo: { nested: 'bar' }}}'
+// instead of the entire object
+```
+
 ## Sponsors
 
 <p align="center">

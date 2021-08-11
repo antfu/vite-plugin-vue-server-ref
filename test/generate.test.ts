@@ -19,8 +19,8 @@ describe('generate', () => {
     expect(genCode(options, id)).toMatchSnapshot()
   })
 
-  it('reactive deferred', () => {
-    const id = parseId('server-reactive:foo?defer')!
+  it('reactive diffed', () => {
+    const id = parseId('server-reactive:foo?diff')!
     expect(genCode(options, id)).toMatchSnapshot()
   })
 })

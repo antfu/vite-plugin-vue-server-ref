@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import state from 'server-reactive:state?defer'
+import state from 'server-reactive:state?diff'
 
 function add() {
   state.items = state.items || []

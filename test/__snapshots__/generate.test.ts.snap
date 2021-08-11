@@ -154,7 +154,7 @@ export default data
 "
 `;
 
-exports[`generate reactive deferred 1`] = `
+exports[`generate reactive diffed 1`] = `
 "
 import { reactive, watch } from \\"vue\\"
 import { randId, stringify, parse, define, apply, reactiveSet, clone, diff } from \\"vite-plugin-vue-server-ref/client\\"

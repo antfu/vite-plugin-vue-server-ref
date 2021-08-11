@@ -40,7 +40,7 @@ export interface ParsedId {
   key: string
   type: 'ref' | 'reactive'
   prefix: string
-  defer: boolean
+  diff: boolean
 }
 
 export function parseId(id: string): ParsedId | undefined {
@@ -52,7 +52,7 @@ export function parseId(id: string): ParsedId | undefined {
         key: key.replace(/\//g, '.'),
         type: pre.includes('ref') ? 'ref' : 'reactive',
         prefix: pre,
-        defer: 'defer' in query,
+        diff: 'diff' in query,
       }
     }
   }

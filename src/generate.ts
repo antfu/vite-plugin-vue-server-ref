@@ -7,12 +7,12 @@ export function genCode(
   id: ParsedId,
 ) {
   const { state, defaultValue, clientVue, debug, debounce } = options
-  const { key, type, prefix, defer } = id
+  const { key, type, prefix, diff } = id
   const access = type === 'ref' ? 'data.value' : 'data'
 
   return `
 import { ${type}, watch } from "${clientVue}"
-import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' reactiveSet,' : ''}${defer ? ' clone, diff' : ''} } from "vite-plugin-vue-server-ref/client"
+import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' reactiveSet,' : ''}${diff ? ' clone, diff' : ''} } from "vite-plugin-vue-server-ref/client"
 
 const data = ${type}(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 
@@ -29,7 +29,7 @@ if (import.meta.hot) {
   const id = randId()
   let skipWatch = false
   let timer = null
-  ${defer ? 'let copy = null' : ''}
+  ${diff ? 'let copy = null' : ''}
 
   function post(payload) {
     ${debug ? `console.log("[server-ref] [${key}] outgoing", payload)` : ''}
@@ -42,7 +42,7 @@ if (import.meta.hot) {
     })
   }
 
-  ${defer
+  ${diff
     ? `
   function makeClone() {
     copy = clone(${access})
@@ -60,7 +60,7 @@ if (import.meta.hot) {
       onPatch.forEach(fn => fn(patch))
     apply(${access}, patch)
     ${debug ? `console.log("[server-ref] [${key}] patch incoming", patch)` : ''}
-    ${defer ? 'makeClone()' : ''}
+    ${diff ? 'makeClone()' : ''}
     skipWatch = false
   }
 
@@ -69,7 +69,7 @@ if (import.meta.hot) {
     onSet.forEach(fn => fn(newData))
     ${type === 'ref' ? 'data.value = payload.data' : 'reactiveSet(data, newData)'}
     ${debug ? `console.log("[server-ref] [${key}] incoming", newData)` : ''}
-    ${defer ? 'makeClone()' : ''}
+    ${diff ? 'makeClone()' : ''}
     skipWatch = false
   }
  
@@ -105,7 +105,7 @@ if (import.meta.hot) {
     timer = setTimeout(()=>{
       post({
         source: id,
-        ${defer ? 'patch: getDiff()' : `data: ${access}`},
+        ${diff ? 'patch: getDiff()' : `data: ${access}`},
         timestamp: Date.now(),
       })
     }, ${debounce})
