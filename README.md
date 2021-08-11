@@ -18,9 +18,82 @@ import ServerRef from 'vite-plugin-vue-server-ref'
 
 export default {
   plugins: [
-    ServerRef()
+    ServerRef({
+      state: {
+        /* Your custom initial state */
+        foo: 'bar',
+        object: {
+          count: 0
+        }
+      }
+    })
   ]
 }
+```
+
+Use import it in your modules (`server-ref:[key]`)
+
+```ts
+import foo from 'server-ref:foo'
+
+console.log(foo.value) // bar
+
+foo.value = 'foobar'
+
+// same as other modules / clients imported the server ref with same key
+// or even refresh the pages
+console.log(foo.value) // foobar
+```
+
+Or working with reactive object (`server-reactive:[key]`)
+
+```ts
+import object from 'server-reactive:object'
+
+console.log(object.count) // 0
+```
+
+## Type Support
+
+As server import can't infer the type correctly (by default it's `ServerRef<any>`), you can using `as` to specify the type.
+
+```ts
+import type { ServerRef, ServerReactive } from 'vite-plugin-vue-server-ref/client'
+import _foo from 'server-ref:foo'
+import _object from 'server-ref:object'
+
+const foo = _foo as ServerRef<string>
+const object = _object as ServerReactive<{ count: number }>
+
+foo.value // string
+object.count // number
+```
+
+## Controls
+
+```ts
+import foo from 'server-ref:foo'
+
+foo.$syncUp = false // make it download only
+
+foo.value = 'foobar' // won't send to server or other clients
+```
+
+```ts
+import foo from 'server-ref:foo'
+
+foo.$syncDown = false // make it upload only
+
+// changes from other clients won't be received
+```
+
+```ts
+import foo from 'server-ref:foo'
+
+// listen to server change
+foo.$onSet((value) => {
+  console.log('Changes from server: ' + value)
+})
 ```
 
 ## Sponsors
