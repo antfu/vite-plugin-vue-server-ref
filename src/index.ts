@@ -51,7 +51,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         server.ws.send({
           type: 'custom',
           event: WS_EVENT,
-          data: payload,
+          data: { ...payload, key },
         })
 
         options.onChanged?.(key, get(state, key), payload.patch, payload.timestamp)
