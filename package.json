@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vue-server-ref",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Share state between clients and Vite server",
   "keywords": [
     "vite-plugin"
