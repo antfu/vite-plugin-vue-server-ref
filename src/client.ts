@@ -30,6 +30,7 @@ export function reactiveSet(target: any, value: any) {
 export function define(target: any, key: string, value: any) {
   Object.defineProperty(target, key, {
     value,
+    writable: true,
     enumerable: false,
   })
 }
