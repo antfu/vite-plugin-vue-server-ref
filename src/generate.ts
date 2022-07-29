@@ -1,6 +1,7 @@
-import { ServerRefOptions } from './types'
+import type { ServerRefOptions } from './types'
 import { WS_EVENT } from './constant'
-import { get, ParsedId } from './utils'
+import type { ParsedId } from './utils'
+import { get } from './utils'
 
 export function genCode(
   options: Required<ServerRefOptions<any>>,

@@ -1,5 +1,5 @@
 import type { Connect } from 'vite'
-import { parseURL, parseQuery } from 'ufo'
+import { parseQuery, parseURL } from 'ufo'
 import { parse } from './client'
 import { PREFIXES } from './constant'
 

@@ -1,4 +1,5 @@
-import { stringify, parse } from '../src/client'
+import { describe, expect, it } from 'vitest'
+import { parse, stringify } from '../src/client'
 
 describe('should', () => {
   it('exported', () => {

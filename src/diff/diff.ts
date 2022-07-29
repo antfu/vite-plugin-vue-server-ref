@@ -1,6 +1,5 @@
 // Ported from https://gist.github.com/developit/998926ad50b5743ac5a108dfde2fbeb2 by @developit
 
-/* eslint-disable no-restricted-syntax */
 /**
  * Use this to create a "patch" object in the worker thread.
  * patch = diff(newObject, oldObject);
@@ -18,7 +17,8 @@ export function diff(obj: any, old: any) {
       const max = Math.min(obj.length, old.length)
       for (; i < max; i++) {
         const differs = different(obj[i], old[i])
-        if (differs) break
+        if (differs)
+          break
       }
       // for previously-empty arrays, hint at newness by using an Array
       const useArray = old.length === 0
@@ -28,14 +28,16 @@ export function diff(obj: any, old: any) {
         if (oldJ >= 0) {
           const differs = different(obj[j], old[oldJ])
           if (differs) {
-            if (!out) out = useArray ? [] : {}
-            // @ts-expect-error
+            if (!out)
+              out = useArray ? [] : {}
+            // @ts-expect-error casting
             out[j] = diff(obj[j], old[oldJ])
           }
         }
         else {
-          if (!out) out = useArray ? [] : {}
-          // @ts-expect-error
+          if (!out)
+            out = useArray ? [] : {}
+          // @ts-expect-error casting
           out[j] = obj[j]
         }
       }
@@ -45,19 +47,21 @@ export function diff(obj: any, old: any) {
     let out
     for (const key in obj) {
       if (!(key in old) || obj[key] !== old[key]) {
-        if (!out) out = {}
+        if (!out)
+          out = {}
         // `undefined` means removed, missing means unchanged.
         const r = diff(obj[key], old[key])
         if (r !== undefined)
-        // @ts-expect-error
+          // @ts-expect-error casting
           out[key] = r
       }
     }
     for (const key in old) {
       if (obj == null || !(key in obj)) {
-        if (!out) out = {}
+        if (!out)
+          out = {}
         // `undefined` means removed, missing means unchanged.
-        // @ts-expect-error
+        // @ts-expect-error casting
         out[key] = undefined
       }
     }

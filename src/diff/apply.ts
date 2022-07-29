@@ -1,6 +1,5 @@
 // Ported from https://gist.github.com/developit/998926ad50b5743ac5a108dfde2fbeb2 by @developit
 
-/* eslint-disable no-restricted-syntax */
 /**
  * Use this to apply diffs on the main thread.
  * newObject = apply(oldObject, patch);
@@ -17,7 +16,7 @@ export function apply(obj: any, diff: any) {
     if (Array.isArray(obj)) {
       out = obj
       for (const i in diff)
-        // @ts-expect-error
+        // @ts-expect-error casting
         out[i] = apply(obj[i], diff[i])
     }
     else {

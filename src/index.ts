@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 import { genCode } from './generate'
-import { ServerRefOptions } from './types'
-import { VIRTUAL_PREFIX, URL_PREFIX, WS_EVENT } from './constant'
+import type { ServerRefOptions } from './types'
+import { URL_PREFIX, VIRTUAL_PREFIX, WS_EVENT } from './constant'
 import { get, getBodyJson, parseId, set } from './utils'
 import { resolveOptions } from './options'
 import { apply } from './diff'
@@ -26,7 +26,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         : null
     },
     configureServer(server) {
-      server.middlewares.use(async(req, res, next) => {
+      server.middlewares.use(async (req, res, next) => {
         if (!req.url || req.method !== 'POST')
           return next()
 

@@ -58,7 +58,7 @@ console.log(object.count) // 0
 As server import can't infer the type correctly (by default it's `ServerRef<any>`), you can using `as` to specify the type.
 
 ```ts
-import type { ServerRef, ServerReactive } from 'vite-plugin-vue-server-ref/client'
+import type { ServerReactive, ServerRef } from 'vite-plugin-vue-server-ref/client'
 import _foo from 'server-ref:foo'
 import _object from 'server-ref:object'
 
@@ -92,7 +92,7 @@ import foo from 'server-ref:foo'
 
 // listen to server change
 foo.$onSet((value) => {
-  console.log('Changes from server: ' + value)
+  console.log(`Changes from server: ${value}`)
 })
 ```
 

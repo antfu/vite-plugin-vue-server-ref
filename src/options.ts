@@ -1,4 +1,4 @@
-import { ServerRefOptions } from './types'
+import type { ServerRefOptions } from './types'
 
 export const defaultOptions: Required<ServerRefOptions<any>> = {
   state: {},

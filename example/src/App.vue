@@ -1,15 +1,3 @@
-<template>
-  <input v-model="state.input" @keydown.enter="add" />
-  <button @click="add">
-    OK
-  </button>
-  <ul>
-    <li v-for="item in state.items" :key="item">
-      {{ item }}
-    </li>
-  </ul>
-</template>
-
 <script setup lang="ts">
 import state from 'server-reactive:state?diff'
 
@@ -19,6 +7,18 @@ function add() {
   state.input = ''
 }
 </script>
+
+<template>
+  <input v-model="state.input" @keydown.enter="add">
+  <button @click="add">
+    OK
+  </button>
+  <ul>
+    <li v-for="item in state.items" :key="item">
+      {{ item }}
+    </li>
+  </ul>
+</template>
 
 <style>
 #app {

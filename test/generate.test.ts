@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { genCode } from '../src/generate'
 import { resolveOptions } from '../src/options'
 import { parseId } from '../src/utils'

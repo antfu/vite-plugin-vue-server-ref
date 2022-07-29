@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`generate deep ref 1`] = `
+exports[`generate > deep ref 1`] = `
 "
 import { ref, watch } from \\"vue\\"
 import { randId, stringify, parse, define, apply, } from \\"vite-plugin-vue-server-ref/client\\"
@@ -78,7 +78,7 @@ export default data
 "
 `;
 
-exports[`generate reactive 1`] = `
+exports[`generate > reactive 1`] = `
 "
 import { reactive, watch } from \\"vue\\"
 import { randId, stringify, parse, define, apply, reactiveSet, } from \\"vite-plugin-vue-server-ref/client\\"
@@ -156,7 +156,7 @@ export default data
 "
 `;
 
-exports[`generate reactive diffed 1`] = `
+exports[`generate > reactive diffed 1`] = `
 "
 import { reactive, watch } from \\"vue\\"
 import { randId, stringify, parse, define, apply, reactiveSet, clone, diff } from \\"vite-plugin-vue-server-ref/client\\"
@@ -243,7 +243,7 @@ export default data
 "
 `;
 
-exports[`generate ref 1`] = `
+exports[`generate > ref 1`] = `
 "
 import { ref, watch } from \\"vue\\"
 import { randId, stringify, parse, define, apply, } from \\"vite-plugin-vue-server-ref/client\\"
