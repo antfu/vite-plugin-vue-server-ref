@@ -32,7 +32,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
 
         const id = parseId(req.url)
         if (!id)
-          return
+          return next()
 
         const key = id.key
         const payload = await getBodyJson(req)
