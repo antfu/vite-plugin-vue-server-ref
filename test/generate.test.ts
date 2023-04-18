@@ -5,23 +5,23 @@ import { parseId } from '../src/utils'
 
 describe('generate', () => {
   const options = resolveOptions({})
-  it('ref', () => {
+  it('ref', async () => {
     const id = parseId('server-ref:foo')!
-    expect(genCode(options, id)).toMatchSnapshot()
+    await expect(genCode(options, id)).toMatchFileSnapshot('output/generate-ref-foo.js')
   })
 
-  it('deep ref', () => {
+  it('deep ref', async () => {
     const id = parseId('server-ref:foo/bar')!
-    expect(genCode(options, id)).toMatchSnapshot()
+    await expect(genCode(options, id)).toMatchFileSnapshot('output/generate-ref-foo-bar.js')
   })
 
-  it('reactive', () => {
+  it('reactive', async () => {
     const id = parseId('server-reactive:foo')!
-    expect(genCode(options, id)).toMatchSnapshot()
+    await expect(genCode(options, id)).toMatchFileSnapshot('output/generate-reactive-foo.js')
   })
 
-  it('reactive diffed', () => {
+  it('reactive diffed', async () => {
     const id = parseId('server-reactive:foo?diff')!
-    expect(genCode(options, id)).toMatchSnapshot()
+    await expect(genCode(options, id)).toMatchFileSnapshot('output/generate-reactive-diff.js')
   })
 })
