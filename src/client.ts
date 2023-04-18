@@ -20,9 +20,15 @@ export function isObject(obj: any) {
 }
 
 export function reactiveSet(target: any, value: any) {
+  for (const key of Object.keys(value)) {
+    if (target[key] !== value[key])
+      target[key] = value[key]
+  }
+
+  // remove extra keys
   const originalKeys = new Set(Object.keys(target))
-  Object.keys(value).forEach(i => originalKeys.delete(i))
-  Object.assign(target, value)
+  Object.keys(value)
+    .forEach(i => originalKeys.delete(i))
   for (const key of originalKeys)
     delete target[key]
 }
