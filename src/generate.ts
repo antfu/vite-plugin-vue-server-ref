@@ -26,8 +26,9 @@ define(data, '$paused', false)
 define(data, '$onSet', fn => onSet.push(fn))
 define(data, '$onPatch', fn => onPatch.push(fn))
 
+const id = randId()
+
 if (import.meta.hot) {
-  const id = randId()
   let skipWatch = false
   let timer = null
   ${diff ? 'let copy = null' : ''}
