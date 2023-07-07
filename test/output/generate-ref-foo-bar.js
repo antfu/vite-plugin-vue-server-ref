@@ -33,7 +33,7 @@ if (import.meta.hot) {
   function applySet(newData) {
     skipWatch = true
     onSet.forEach(fn => fn(newData))
-    data.value = payload.data
+    data.value = newData
     skipWatch = false
   }
   import.meta.hot.on("vue-server-ref", (payload) => {
