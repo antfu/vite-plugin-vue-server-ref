@@ -70,7 +70,7 @@ if (import.meta.hot) {
   function applySet(newData) {
     skipWatch = true
     onSet.forEach(fn => fn(newData))
-    ${type === 'ref' ? 'data.value = payload.data' : 'reactiveSet(data, newData)'}
+    ${type === 'ref' ? 'data.value = newData' : 'reactiveSet(data, newData)'}
     ${debug ? `console.log("[server-ref] [${key}] incoming", newData)` : ''}
     ${diff ? 'makeClone()' : ''}
     skipWatch = false
