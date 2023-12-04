@@ -1,5 +1,6 @@
 declare module 'server-ref:*' {
   import type { Ref } from 'vue'
+
   type ServerRef<T> = Ref<T> & {
     $syncDown: boolean
     $syncUp: boolean

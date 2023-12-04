@@ -20,20 +20,20 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
     "./client": {
-      "require": "./dist/client.js",
-      "import": "./dist/client.mjs"
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js"
     }
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "*.d.ts"
+    "*.d.ts",
+    "dist"
   ],
   "scripts": {
     "prepublishOnly": "nr build",
@@ -53,7 +53,7 @@
     "ufo": "^1.1.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.39.7",
+    "@antfu/eslint-config": "^2.2.2",
     "@antfu/ni": "^0.21.4",
     "@antfu/utils": "^0.7.5",
     "@types/debug": "^4.1.8",
@@ -61,7 +61,7 @@
     "@types/node": "^20.4.1",
     "@vue/reactivity": "^3.3.4",
     "bumpp": "^9.1.1",
-    "eslint": "^8.44.0",
+    "eslint": "^8.55.0",
     "esno": "^0.16.3",
     "klona": "^2.0.6",
     "tsup": "^7.1.0",
