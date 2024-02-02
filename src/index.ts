@@ -1,4 +1,6 @@
 import type { Plugin } from 'vite'
+import { resolvePath } from 'mlly'
+import { ensurePrefix, slash } from '@antfu/utils'
 import { genCode } from './generate'
 import type { ServerRefOptions } from './types'
 import { URL_PREFIX, VIRTUAL_PREFIX, WS_EVENT } from './constant'
@@ -60,7 +62,7 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         res.end()
       })
     },
-    load(id) {
+    async load(id) {
       const res = parseId(id)
       if (!res)
         return
@@ -69,7 +71,15 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
         idMaps[res.key] = new Set()
       idMaps[res.key]!.add(id)
 
-      return genCode(resolved, res)
+      return genCode(
+        resolved,
+        res,
+        toAtFS(await resolvePath('vite-plugin-vue-server-ref/client', { url: import.meta.url })),
+      )
     },
   }
+}
+
+function toAtFS(path: string) {
+  return `/@fs${ensurePrefix('/', slash(path))}`
 }

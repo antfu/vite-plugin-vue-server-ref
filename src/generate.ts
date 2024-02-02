@@ -6,6 +6,7 @@ import { get } from './utils'
 export function genCode(
   options: Required<ServerRefOptions<any>>,
   id: ParsedId,
+  clientUrl = 'vite-plugin-vue-server-ref/client',
 ) {
   const { state, defaultValue, clientVue, debug, debounce } = options
   const { key, type, prefix, diff } = id
@@ -13,7 +14,7 @@ export function genCode(
 
   return `
 import { ${type}, watch } from "${clientVue}"
-import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' reactiveSet,' : ''}${diff ? ' clone, diff' : ''} } from "vite-plugin-vue-server-ref/client"
+import { randId, stringify, parse, define, apply,${type === 'reactive' ? ' reactiveSet,' : ''}${diff ? ' clone, diff' : ''} } from ${JSON.stringify(clientUrl)}
 
 const data = ${type}(${JSON.stringify(get(state, key) ?? defaultValue(key))})
 
