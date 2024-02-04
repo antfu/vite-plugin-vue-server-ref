@@ -1,4 +1,4 @@
-import type { Ref } from '@vue/reactivity'
+import type { Ref } from 'vue'
 
 export interface ServerRefOptions<T extends Record<string, unknown>> {
   state?: T
