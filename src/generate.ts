@@ -1,6 +1,6 @@
 import type { ServerRefOptions } from './types'
-import { WS_EVENT } from './constant'
 import type { ParsedId } from './utils'
+import { WS_EVENT } from './constant'
 import { get } from './utils'
 
 export function genCode(
@@ -120,5 +120,5 @@ else {
 }
 
 export default data
-`.replace(/\n\s*\n/gm, '\n')
+`.replace(/\n\s*\n/g, '\n')
 }

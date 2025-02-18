@@ -5,8 +5,10 @@ export default defineBuildConfig({
     'src/client.ts',
     'src/index.ts',
   ],
-  declaration: true,
+  declaration: 'node16',
   rollup: {
-    emitCJS: true,
+    inlineDependencies: [
+      '@antfu/utils',
+    ],
   },
 })

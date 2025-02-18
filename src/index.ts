@@ -1,12 +1,12 @@
 import type { Plugin } from 'vite'
-import { resolvePath } from 'mlly'
-import { ensurePrefix, slash } from '@antfu/utils'
-import { genCode } from './generate'
 import type { ServerRefOptions } from './types'
+import { ensurePrefix, slash } from '@antfu/utils'
+import { resolvePath } from 'mlly'
 import { URL_PREFIX, VIRTUAL_PREFIX, WS_EVENT } from './constant'
-import { get, getBodyJson, parseId, set } from './utils'
-import { resolveOptions } from './options'
 import { apply } from './diff'
+import { genCode } from './generate'
+import { resolveOptions } from './options'
+import { get, getBodyJson, parseId, set } from './utils'
 
 export * from './types'
 

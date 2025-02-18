@@ -1,5 +1,5 @@
+export { apply, diff } from './diff'
 export { klona as clone } from 'klona/json'
-export { diff, apply } from './diff'
 
 export const UNDEFINED = '__UNDEFINED___'
 

@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
 import ServerRef from 'vite-plugin-vue-server-ref'
 
 // https://vitejs.dev/config/
