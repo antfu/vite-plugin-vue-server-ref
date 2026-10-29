@@ -8,7 +8,9 @@ export function stringify(data: any) {
 }
 
 export function parse(json: string) {
-  return JSON.parse(json, (key, value) => value === UNDEFINED ? undefined : value)
+  // `__proto__` keys are dropped: merged into state, or written back into a module as an
+  // object literal, they would set a prototype
+  return JSON.parse(json, (key, value) => key === '__proto__' || value === UNDEFINED ? undefined : value)
 }
 
 export function randId() {
@@ -21,6 +23,8 @@ export function isObject(obj: any) {
 
 export function reactiveSet(target: any, value: any) {
   for (const key of Object.keys(value)) {
+    if (key === '__proto__')
+      continue
     if (target[key] !== value[key])
       target[key] = value[key]
   }

@@ -6,7 +6,7 @@ import { URL_PREFIX, VIRTUAL_PREFIX, WS_EVENT } from './constant'
 import { apply } from './diff'
 import { genCode } from './generate'
 import { resolveOptions } from './options'
-import { get, getBodyJson, parseId, set } from './utils'
+import { get, getBodyJson, isSafeKeyPath, parseId, set } from './utils'
 
 export * from './types'
 
@@ -15,7 +15,8 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
 
   const { state } = resolved
 
-  const idMaps: Record<string, Set<string> | undefined> = {}
+  // keyed by request input: no inherited entries
+  const idMaps: Record<string, Set<string> | undefined> = Object.create(null)
 
   return <Plugin>{
     name: 'vite-plugin-vue-server-ref',
@@ -37,29 +38,43 @@ export default function VitePluginServerRef(options: ServerRefOptions<any> = {})
           return next()
 
         const key = id.key
-        const payload = await getBodyJson(req)
-
-        for (const id of idMaps[key] || []) {
-          const module = server.moduleGraph.getModuleById(id)
-          if (module)
-            server.moduleGraph.invalidateModule(module)
+        if (!isSafeKeyPath(key)) {
+          res.statusCode = 400
+          res.end()
+          return
         }
 
-        if (payload.patch)
-          set(state, key, apply(get(state, key), payload.patch))
-        else
-          set(state, key, payload.data)
+        try {
+          const payload = await getBodyJson(req)
 
-        server.ws.send({
-          type: 'custom',
-          event: WS_EVENT,
-          data: { ...payload, key },
-        })
+          for (const id of idMaps[key] || []) {
+            const module = server.moduleGraph.getModuleById(id)
+            if (module)
+              server.moduleGraph.invalidateModule(module)
+          }
 
-        options.onChanged?.(key, get(state, key), payload.patch, payload.timestamp)
+          if (payload.patch)
+            set(state, key, apply(get(state, key), payload.patch))
+          else
+            set(state, key, payload.data)
 
-        res.write('')
-        res.end()
+          server.ws.send({
+            type: 'custom',
+            event: WS_EVENT,
+            data: { ...payload, key },
+          })
+
+          options.onChanged?.(key, get(state, key), payload.patch, payload.timestamp)
+
+          res.write('')
+          res.end()
+        }
+        catch {
+          // a body that is no JSON, or a key path below a primitive: answer it instead of
+          // rejecting the middleware
+          res.statusCode = 400
+          res.end()
+        }
       })
     },
     async load(id) {

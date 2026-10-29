@@ -1,4 +1,5 @@
 import type { Connect } from 'vite'
+import { hasOwnProperty } from '@antfu/utils'
 import { parseQuery, parseURL } from 'ufo'
 import { parse } from './client'
 import { PREFIXES } from './constant'
@@ -19,17 +20,27 @@ export function getBodyJson(req: Connect.IncomingMessage) {
   })
 }
 
+// A key path comes from the request URL. These segments would reach a prototype instead of
+// the state's own data, so a path holding one is refused.
+const UNSAFE_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype'])
+
+export function isSafeKeyPath(key: string) {
+  return !key.split('.').some(segment => UNSAFE_SEGMENTS.has(segment))
+}
+
 export function get(obj: any, key: string) {
-  return key.split('.').reduce((acc, key) => acc?.[key], obj)
+  return key.split('.').reduce((acc, key) => hasOwnProperty(acc, key) ? acc[key] : undefined, obj)
 }
 
 export function set(obj: any, key: string, value: any) {
+  if (!isSafeKeyPath(key))
+    return
   const keys = key.split('.')
   let acc = obj
   keys
     .slice(0, -1)
     .forEach((key) => {
-      if (!acc[key])
+      if (!hasOwnProperty(acc, key) || !acc[key])
         acc[key] = {}
       acc = acc[key]
     })
